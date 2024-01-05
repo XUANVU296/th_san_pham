@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Traits\HasPermissions;
 
-class User extends Authenticatable
+class User extends Authenticatable 
 {
     use HasApiTokens, HasFactory, Notifiable;
-
     /**
      * The attributes that are mass assignable.
      *
@@ -21,6 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'provider',
+        'provider_id',
     ];
 
     /**
@@ -32,6 +34,16 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+    // Trong mô hình User (app\Models\User.php)
+    public function groups()
+    {
+        return $this->belongsTo(Group::class, 'group_id', 'id');
+    }
+    public function hasPermission($permission)
+    {
+        $roles = $this->groups->roles->pluck('name')->toArray();
+        return in_array($permission,$roles);
+    }
 
     /**
      * The attributes that should be cast.

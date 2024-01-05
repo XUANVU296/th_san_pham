@@ -16,4 +16,12 @@ class Product extends Model
         'category_id',
         'price',
     ];
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'product_tag', 'product_id', 'tag_id');
+    }
 }
